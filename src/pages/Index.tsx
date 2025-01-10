@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { DeveloperCard } from "@/components/DeveloperCard";
 import { SearchBar } from "@/components/SearchBar";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import type { Developer } from "@/types/developer";
 
 // Temporary mock data
@@ -55,6 +57,7 @@ const mockDevelopers: Developer[] = [
 export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const handleSkillToggle = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -79,13 +82,40 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto py-8 px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 text-transparent bg-clip-text">
-            Quick Dev Booking Platform
+        {/* Hero Section */}
+        <div className="text-center mb-12 relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/10 blur-3xl -z-10" />
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 text-transparent bg-clip-text animate-fade-in">
+            Book Developers Instantly
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Book instant video calls with expert developers
+          <p className="text-xl text-muted-foreground mb-8 animate-fade-in">
+            Seamless Crypto Payments. Instant Video Calls.
           </p>
+          
+          {/* Auth Buttons */}
+          <div className="flex justify-center gap-4 mb-12">
+            <div className="space-y-2">
+              <Button
+                size="lg"
+                className="w-32 hover:scale-105 transition-transform"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </Button>
+              <p className="text-sm text-muted-foreground">For Users & Developers</p>
+            </div>
+            <div className="space-y-2">
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-32 hover:scale-105 transition-transform"
+                onClick={() => navigate("/signup")}
+              >
+                Sign Up
+              </Button>
+              <p className="text-sm text-muted-foreground">Create New Account</p>
+            </div>
+          </div>
         </div>
 
         <div className="max-w-2xl mx-auto mb-12">

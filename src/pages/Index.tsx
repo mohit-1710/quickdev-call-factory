@@ -4,61 +4,14 @@ import { SearchBar } from "@/components/SearchBar";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Video, CreditCard, Clock } from "lucide-react";
-import type { Developer } from "@/types/developer";
-
-// Temporary mock data
-const mockDevelopers: Developer[] = [
-  {
-    id: "1",
-    name: "Sarah Johnson",
-    avatar: "https://i.pravatar.cc/150?img=1",
-    title: "Senior Full Stack Developer",
-    description: "Specialized in React and Node.js with 8 years of experience in building scalable applications.",
-    hourlyRate: 150,
-    skills: [
-      { name: "React" },
-      { name: "Node.js" },
-      { name: "TypeScript" },
-      { name: "AWS" },
-    ],
-    status: "online",
-  },
-  {
-    id: "2",
-    name: "Michael Chen",
-    avatar: "https://i.pravatar.cc/150?img=2",
-    title: "Cloud Architecture Expert",
-    description: "AWS certified developer with expertise in microservices and serverless architecture.",
-    hourlyRate: 180,
-    skills: [
-      { name: "AWS" },
-      { name: "Python" },
-      { name: "Docker" },
-      { name: "Kubernetes" },
-    ],
-    status: "busy",
-  },
-  {
-    id: "3",
-    name: "Emma Wilson",
-    avatar: "https://i.pravatar.cc/150?img=3",
-    title: "Frontend Specialist",
-    description: "Passionate about creating beautiful and accessible user interfaces using modern web technologies.",
-    hourlyRate: 130,
-    skills: [
-      { name: "React" },
-      { name: "TypeScript" },
-      { name: "Tailwind" },
-      { name: "Next.js" },
-    ],
-    status: "offline",
-  },
-];
+import { useDevelopers } from "@/hooks/useDevelopers";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Index() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const navigate = useNavigate();
+  const { developers, loading, error } = useDevelopers();
 
   const handleSkillToggle = (skill: string) => {
     setSelectedSkills((prev) =>
@@ -66,7 +19,7 @@ export default function Index() {
     );
   };
 
-  const filteredDevelopers = mockDevelopers.filter((dev) => {
+  const filteredDevelopers = developers.filter((dev) => {
     const matchesSearch = dev.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesSkills =
       selectedSkills.length === 0 ||
@@ -175,10 +128,36 @@ export default function Index() {
             />
           </div>
 
+          {error && (
+            <div className="text-center text-red-500 mb-8">
+              Failed to load developers. Please try again later.
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredDevelopers.map((developer) => (
-              <DeveloperCard key={developer.id} developer={developer} />
-            ))}
+            {loading ? (
+              // Loading skeletons
+              Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="p-6 space-y-4">
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-16 w-16 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[200px]" />
+                      <Skeleton className="h-4 w-[150px]" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-20 w-full" />
+                  <div className="flex justify-between items-center">
+                    <Skeleton className="h-6 w-[100px]" />
+                    <Skeleton className="h-10 w-[100px]" />
+                  </div>
+                </div>
+              ))
+            ) : (
+              filteredDevelopers.map((developer) => (
+                <DeveloperCard key={developer.id} developer={developer} />
+              ))
+            )}
           </div>
         </div>
 
